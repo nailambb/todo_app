@@ -3,5 +3,5 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
   plugins: [tailwindcss()],
-  base: "/REPO_NAME/",
+  base: "https://github.com/nailambb/todo_app",
 });
