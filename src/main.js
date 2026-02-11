@@ -224,8 +224,110 @@ const handleKeyDownToCreateNewTodo = (event) => {
       }
     }
   };
-  
 
+  for (let i = 0; i < todos.length; i++) {
+    if (todos[i].id === todoIdNumber) {
+      todos[i].completed = !todos[i].completed;
+    }
+  }
+  
+  
+  // Helper function to toggle the completed status of a todo item
+const toggleTodo = (todos, todoId) =>
+    todos.map((todo) =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
+    );
+// Helper function to find the target todo element
+const findTargetTodoElement = (event) =>
+    event.target.id?.includes("todo-text") ? event.target : null;
+  
+  // Helper function to parse the todo id from the todo element
+  const parseTodoId = (todo) => (todo ? Number(todo.id.split("-").pop()) : -1);
+  
+  // Event handler to toggle the completed status of a todo item
+  const handleClickOnTodoList = (event) => {
+    todos = toggleTodo(todos, parseTodoId(findTargetTodoElement(event)));
+    renderTodos();
+  };
+  
+  // Helper function to update the class list of a navbar element
+const updateClassList = (element, isActive) => {
+    const classes = [
+      "underline",
+      "underline-offset-4",
+      "decoration-rose-800",
+      "decoration-2",
+    ];
+    if (isActive) {
+      element.classList.add(...classes);
+    } else {
+      element.classList.remove(...classes);
+    }
+  };
+  
+  // Helper function to render the navbar anchor elements
+  const renderTodoNavBar = (href) => {
+    Array.from(todoNav.children).forEach((element) => {
+      updateClassList(element, element.href === href);
+    });
+  };
+  
+  // Event handler to filter the todos based on the navbar selection
+  const handleClickOnNavbar = (event) => {
+    // if the clicked element is an anchor tag
+    if (event.target.tagName === "A") {
+      const hrefValue = event.target.href;
+      filter = hrefValue.split("/").pop() || "all";
+      renderTodoNavBar(hrefValue);
+      renderTodos();
+    }
+  };
+  // Factory function to create a todo app
+const createTodoApp = () => {
+    // Define the state of our app
+    let todos = [];
+    let nextTodoId = 1;
+    let filter = "all"; // can be 'all', 'active', or 'completed'
+  
+    return {
+      addTodo: (newTodoText) => {
+        todos = addTodo(todos, newTodoText, nextTodoId++);
+      },
+      toggleTodo: (todoId) => {
+        todos = toggleTodo(todos, todoId);
+      },
+      setFilter: (newFilter) => {
+        filter = newFilter;
+      },
+      getTodos: () => filterTodos(todos, filter),
+    };
+  };
+
+  // Helper function to create a new array with the existing todos and a new todo item
+const addTodo = (todos, newTodoText, newTodoId) => [
+    ...todos,
+    { id: newTodoId, text: newTodoText, completed: false },
+  ];
+  
+  // Helper function to toggle the completed status of a todo item
+  const toggleTodo = (todos, todoId) =>
+    todos.map((todo) =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo,
+    );
+  
+  // Helper function to filter todos based on the current filter setting
+  const filterTodos = (todos, filter) => {
+    switch (filter) {
+      case "all":
+        return [...todos];
+      case "completed":
+        return todos.filter((todo) => todo.completed);
+      case "active":
+        return todos.filter((todo) => !todo.completed);
+      default:
+        return [...todos];
+    }
+  };
   
   
   
